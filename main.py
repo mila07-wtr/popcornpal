@@ -148,3 +148,21 @@ if __name__ == "__main__":
     app.add_handler(CallbackQueryHandler(button_handler))
     print("PopcornPal запущен... 🍿")
     app.run_polling()
+import threading
+import time
+import os
+
+# Хак для Render: фейковый HTTP-сервер, чтобы был открыт порт
+def keep_alive():
+    import socket
+    import http.server
+    import socketserver
+
+    PORT = int(os.environ.get("PORT", 10000))  # Render требует переменную PORT
+
+    Handler = http.server.SimpleHTTPRequestHandler
+    with socketserver.TCPServer(("", PORT), Handler) as httpd:
+        print(f"Сервер живой на порту {PORT}")
+        httpd.serve_forever()
+
+threading.Thread(target=keep_alive, daemon=True).start()
